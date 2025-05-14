@@ -1,0 +1,51 @@
+services:
+  loadbalancer:
+    image: nginx:alpine
+    ports:
+      - "8080:80"
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf
+      - ./frontend:/usr/share/nginx/html
+    depends_on:
+      - core-service
+      - date-service
+      - math-service
+      - user-service
+    networks:
+      - backend
+
+  core-service:
+    build: .
+    command: /app/bin/core-service
+    expose:
+      - "80"
+    networks:
+      - backend
+
+  date-service:
+    build: .
+    command: /app/bin/date-service
+    expose:
+      - "80"
+    networks:
+      - backend
+
+  math-service:
+    build: .
+    command: /app/bin/math-service
+    expose:
+      - "80"
+    networks:
+      - backend
+
+  user-service:
+    build: .
+    command: /app/bin/user-service
+    expose:
+      - "80"
+    networks:
+      - backend
+
+networks:
+  backend:
+    driver: bridge
